@@ -11,19 +11,19 @@ def download_nsduh():
     """
     Download NSDUH dataset.
 
-    Note: NSDUH data requires manual download from SAMHDA website.
+    Note: NSDUH data is available on Kaggle.
     """
     print("="*80)
     print("NSDUH DATASET")
     print("="*80)
-    print("\nThe NSDUH (National Survey on Drug Use and Health) dataset requires")
-    print("manual download due to data use agreements.\n")
+    print("\nThe NSDUH (National Survey on Drug Use and Health) dataset is")
+    print("available on Kaggle.\n")
     print("📥 Download Instructions:")
-    print("   1. Visit: https://www.datafiles.samhsa.gov/dataset/nsduh-2002-2018-ds0001")
-    print("   2. Accept the data use agreement")
-    print("   3. Download: NSDUH_2002_2018_Tab.tsv")
+    print("   1. Visit Kaggle: https://www.kaggle.com/datasets/adamhamrick/national-survey-of-drug-use-and-health-20022018")
+    print("   2. Download the dataset (requires Kaggle account)")
+    print("   3. Extract and find: NSDUH_2002_2018_Tab.tsv")
     print("   4. Place the file in: data/raw/NSDUH_2002_2018_Tab.tsv\n")
-    print("💡 Alternative: If you have the data file, manually place it in data/raw/")
+    print("💡 Note: You may need to accept Kaggle's terms and conditions")
     print("="*80 + "\n")
 
 
@@ -31,21 +31,21 @@ def download_smni():
     """
     Download SMNI EEG dataset.
 
-    Note: SMNI data requires manual download from UCI repository.
+    Note: SMNI data is available on Kaggle.
     """
     print("="*80)
     print("SMNI EEG DATASET")
     print("="*80)
-    print("\nThe SMNI (EEG) dataset can be downloaded from UCI Machine Learning Repository.\n")
+    print("\nThe SMNI (EEG) dataset is available on Kaggle.\n")
     print("📥 Download Instructions:")
-    print("   1. Visit: https://archive.ics.uci.edu/ml/datasets/EEG+Database")
-    print("   2. Download the dataset")
+    print("   1. Visit Kaggle: https://www.kaggle.com/datasets/nnair25/Alcoholics")
+    print("   2. Download the dataset (requires Kaggle account)")
     print("   3. Extract files to:")
     print("      - data/raw/SMNI_CMI_TRAIN/ (468 files: Data1.csv to Data468.csv)")
     print("      - data/raw/SMNI_CMI_TEST/ (480 files: Data1.csv to Data480.csv)\n")
-    print("💡 Alternative download source:")
-    print("   - Kaggle: https://www.kaggle.com/datasets/nnair25/Alcoholics")
-    print("   - GitHub: https://github.com/datasets (search for 'EEG alcoholic')\n")
+    print("💡 Alternative download sources:")
+    print("   - UCI ML Repository: https://archive.ics.uci.edu/ml/datasets/EEG+Database")
+    print("   - GitHub: Search for 'EEG alcoholic' datasets\n")
     print("="*80 + "\n")
 
 
