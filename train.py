@@ -302,7 +302,7 @@ def train_pebs_system(config, verbose=True):
     print(f"   ERI Model Test Accuracy: {eri_results['accuracy']:.4f}")
     print(f"   BVI Model Test Accuracy: {bvi_results['accuracy']:.4f}")
     print(f"   Risk Categories: {len(risk_distribution)} classes")
-    print(f"   High Risk Samples: {risk_distribution['high_risk_count']} ({risk_distribution['high_risk_percentage']:.1f}%)")
+    print(f"   High Risk Samples: {risk_distribution[3]['count']} ({risk_distribution[3]['percentage']:.1f}%)")
     print("\n✅ All models saved to: " + config['training']['models_path'])
     print("="*80 + "\n")
 
