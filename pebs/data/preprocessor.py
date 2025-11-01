@@ -52,13 +52,16 @@ class NSDUHPreprocessor:
             print("🎯 Identifying target variable...")
 
         # Common NSDUH alcohol-related variables
+        # Prioritize clearer variables without missing value codes
         target_candidates = [
+            'ALCTRY',    # Ever tried alcohol (clearest)
+            'ALCEVER',   # Ever used alcohol (clear)
             'ABODLANG',  # Alcohol Abuse/Dependence
             'ABODAL2',   # Alcohol Abuse/Dependence (alternative)
             'ALCABDEP',  # Alcohol Abuse or Dependence
             'ALDEPEV',   # Alcohol Dependence Ever
             'ABUSALCO',  # Alcohol Abuse
-            'ALCYR'      # Past Year Alcohol Use
+            'ALCYR'      # Past Year Alcohol Use (may have -9 values)
         ]
 
         # Try to find existing target variable
@@ -68,7 +71,7 @@ class NSDUHPreprocessor:
                 if verbose:
                     print(f"   Using '{candidate}' as target variable")
                     value_counts = df[candidate].value_counts()
-                    print(f"   Distribution: {value_counts.to_dict()}")
+                    print(f"   Distribution (before filtering): {value_counts.to_dict()}")
                 return df[candidate]
 
         # Fallback: Create binary target from alcohol use frequency
@@ -216,12 +219,16 @@ class NSDUHPreprocessor:
             print(f"   Test:  {X_test.shape[0]:,} samples ({X_test.shape[0]/len(X)*100:.1f}%)")
             print(f"   Features: {X_train.shape[1]}")
 
+            # Safe target distribution display
             if hasattr(y_train, 'value_counts'):
                 print(f"\n   Train target distribution: {y_train.value_counts().to_dict()}")
                 print(f"   Test target distribution:  {y_test.value_counts().to_dict()}")
             else:
-                print(f"\n   Train target distribution: {np.bincount(y_train)}")
-                print(f"   Test target distribution:  {np.bincount(y_test)}")
+                # Use unique/count instead of bincount for safety
+                train_unique, train_counts = np.unique(y_train, return_counts=True)
+                test_unique, test_counts = np.unique(y_test, return_counts=True)
+                print(f"\n   Train target distribution: {dict(zip(train_unique, train_counts))}")
+                print(f"   Test target distribution:  {dict(zip(test_unique, test_counts))}")
 
         return X_train, X_test, y_train, y_test
 
@@ -330,6 +337,21 @@ class NSDUHPreprocessor:
 
         # Step 1: Identify target
         y = self.identify_target(df, verbose)
+
+        # Step 1.5: Filter out negative values (NSDUH missing codes: -9, -8, -7, etc.)
+        if verbose:
+            print("🔧 Filtering negative values from target variable...")
+            print(f"   Original samples: {len(y):,}")
+
+        valid_mask = y >= 0
+        df = df[valid_mask].reset_index(drop=True)
+        y = y[valid_mask].reset_index(drop=True)
+
+        if verbose:
+            print(f"   Valid samples: {len(y):,}")
+            print(f"   Removed: {(~valid_mask).sum():,} samples with negative values")
+            value_counts = y.value_counts()
+            print(f"   Distribution (after filtering): {value_counts.to_dict()}\n")
 
         # Step 2: Remove high missing columns
         df_clean = self.remove_high_missing(df, verbose)
