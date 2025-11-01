@@ -13,9 +13,14 @@ class NSDUHLoader:
     """
     Loader for NSDUH (National Survey on Drug Use and Health) data.
     Handles large TSV files with memory optimization for 16GB RAM systems.
+
+    Memory optimization strategies:
+    1. Column selection (usecols): Load only selected columns (3,662 → ~80)
+    2. Chunk processing: Process data in chunks to limit memory usage
+    3. Low memory mode: Optimize pandas read_csv memory usage
     """
 
-    def __init__(self, file_path, chunksize=10000, low_memory=True):
+    def __init__(self, file_path, chunksize=10000, low_memory=True, selected_columns=None):
         """
         Initialize NSDUH loader.
 
@@ -23,38 +28,81 @@ class NSDUHLoader:
             file_path: Path to NSDUH TSV file
             chunksize: Number of rows to process at once (default: 10000)
             low_memory: Enable low memory mode (default: True)
+            selected_columns: List of column names to load (None = load all)
         """
         self.file_path = file_path
         self.chunksize = chunksize
         self.low_memory = low_memory
+        self.selected_columns = selected_columns
         self.data = None
 
-    def load(self, verbose=True):
+    def load(self, verbose=True, use_chunks=True):
         """
         Load NSDUH data with memory optimization.
 
         Args:
             verbose: Print loading progress (default: True)
+            use_chunks: Use chunk processing for memory efficiency (default: True)
 
         Returns:
             DataFrame with loaded data
         """
         if verbose:
             print(f"📊 Loading NSDUH dataset from {self.file_path}...")
-            print(f"   Using chunksize: {self.chunksize}")
+            if self.selected_columns:
+                print(f"   Selected columns: {len(self.selected_columns)} (instead of all 3,662)")
+            print(f"   Using chunksize: {self.chunksize if use_chunks else 'disabled'}")
+            print(f"   Low memory mode: {self.low_memory}")
 
         try:
-            # Load data
-            self.data = pd.read_csv(
-                self.file_path,
-                sep='\t',
-                low_memory=self.low_memory
-            )
+            if use_chunks:
+                # METHOD: Chunk processing with iterator (방안 3)
+                # Load data in chunks to limit memory usage
+                if verbose:
+                    print(f"   Processing data in chunks...")
+
+                chunk_list = []
+                chunk_iterator = pd.read_csv(
+                    self.file_path,
+                    sep='\t',
+                    chunksize=self.chunksize,
+                    low_memory=self.low_memory,
+                    usecols=self.selected_columns  # METHOD: Column selection (방안 1)
+                )
+
+                # Process chunks with progress bar
+                for chunk in tqdm(chunk_iterator, desc="Loading chunks", disable=not verbose):
+                    chunk_list.append(chunk)
+
+                    # Periodic garbage collection for memory management
+                    if len(chunk_list) % 10 == 0:
+                        gc.collect()
+
+                # Concatenate all chunks
+                if verbose:
+                    print(f"   Concatenating {len(chunk_list)} chunks...")
+                self.data = pd.concat(chunk_list, ignore_index=True)
+                del chunk_list  # Free memory
+                gc.collect()
+
+            else:
+                # METHOD: Direct load without chunks (faster but more memory)
+                self.data = pd.read_csv(
+                    self.file_path,
+                    sep='\t',
+                    low_memory=self.low_memory,
+                    usecols=self.selected_columns  # METHOD: Column selection (방안 1)
+                )
 
             if verbose:
                 print(f"✅ Dataset loaded successfully")
                 print(f"   Shape: {self.data.shape}")
-                print(f"   Memory usage: {self.data.memory_usage(deep=True).sum() / 1e9:.2f} GB")
+                memory_gb = self.data.memory_usage(deep=True).sum() / 1e9
+                print(f"   Memory usage: {memory_gb:.2f} GB")
+
+                if self.selected_columns:
+                    reduction = (1 - len(self.selected_columns) / 3662) * 100
+                    print(f"   Memory saved: ~{reduction:.1f}% by column selection")
 
             return self.data
 

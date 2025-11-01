@@ -1,11 +1,13 @@
 """
 Data preprocessing module for NSDUH survey data.
+Includes PCA dimensionality reduction for memory efficiency.
 """
 
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 import gc
 
 
@@ -15,7 +17,7 @@ class NSDUHPreprocessor:
     Handles missing values, feature selection, and train/test splitting.
     """
 
-    def __init__(self, missing_threshold=0.5, test_size=0.2, random_state=42):
+    def __init__(self, missing_threshold=0.5, test_size=0.2, random_state=42, pca_config=None):
         """
         Initialize preprocessor.
 
@@ -23,11 +25,15 @@ class NSDUHPreprocessor:
             missing_threshold: Remove columns with missing% > this threshold
             test_size: Proportion of data for test set
             random_state: Random seed for reproducibility
+            pca_config: PCA configuration dictionary (None = no PCA)
+                        {'enabled': True, 'n_components': 0.95, 'whiten': False}
         """
         self.missing_threshold = missing_threshold
         self.test_size = test_size
         self.random_state = random_state
         self.scaler = StandardScaler()
+        self.pca = None
+        self.pca_config = pca_config or {}
         self.feature_names = None
         self.target_column = None
 
@@ -244,6 +250,61 @@ class NSDUHPreprocessor:
 
         return X_train_scaled, X_test_scaled
 
+    def apply_pca(self, X_train, X_test, verbose=True):
+        """
+        Apply PCA dimensionality reduction.
+
+        Args:
+            X_train: Training features (scaled)
+            X_test: Test features (scaled)
+            verbose: Print information
+
+        Returns:
+            Tuple of (X_train_pca, X_test_pca)
+        """
+        if not self.pca_config.get('enabled', False):
+            if verbose:
+                print("ℹ️  PCA disabled, skipping dimensionality reduction")
+            return X_train, X_test
+
+        n_components = self.pca_config.get('n_components', 0.95)
+        whiten = self.pca_config.get('whiten', False)
+        random_state = self.pca_config.get('random_state', self.random_state)
+
+        if verbose:
+            print(f"🔬 Applying PCA dimensionality reduction...")
+            if isinstance(n_components, float):
+                print(f"   Target variance explained: {n_components*100:.1f}%")
+            else:
+                print(f"   Target components: {n_components}")
+            print(f"   Original features: {X_train.shape[1]}")
+
+        # Initialize and fit PCA
+        self.pca = PCA(
+            n_components=n_components,
+            whiten=whiten,
+            random_state=random_state
+        )
+
+        X_train_pca = self.pca.fit_transform(X_train)
+        X_test_pca = self.pca.transform(X_test)
+
+        if verbose:
+            print(f"✅ PCA completed")
+            print(f"   Reduced to: {X_train_pca.shape[1]} components")
+            print(f"   Variance explained: {self.pca.explained_variance_ratio_.sum()*100:.2f}%")
+            print(f"   Dimension reduction: {X_train.shape[1]} → {X_train_pca.shape[1]} "
+                  f"({(1 - X_train_pca.shape[1]/X_train.shape[1])*100:.1f}% reduction)")
+
+            # Show top components
+            if len(self.pca.explained_variance_ratio_) > 0:
+                top_n = min(5, len(self.pca.explained_variance_ratio_))
+                print(f"   Top {top_n} components explain:")
+                for i in range(top_n):
+                    print(f"      PC{i+1}: {self.pca.explained_variance_ratio_[i]*100:.2f}%")
+
+        return X_train_pca, X_test_pca
+
     def process(self, df, verbose=True):
         """
         Complete preprocessing pipeline.
@@ -289,6 +350,11 @@ class NSDUHPreprocessor:
             X_train, X_test, verbose=verbose
         )
 
+        # Step 7: Apply PCA (if enabled)
+        X_train_final, X_test_final = self.apply_pca(
+            X_train_scaled, X_test_scaled, verbose=verbose
+        )
+
         # Clean up memory
         del df_clean, X
         gc.collect()
@@ -304,9 +370,10 @@ class NSDUHPreprocessor:
             'X_test': X_test,
             'y_train': y_train,
             'y_test': y_test,
-            'X_train_scaled': X_train_scaled,
-            'X_test_scaled': X_test_scaled,
+            'X_train_scaled': X_train_final,
+            'X_test_scaled': X_test_final,
             'feature_names': self.feature_names,
             'target_column': self.target_column,
-            'scaler': self.scaler
+            'scaler': self.scaler,
+            'pca': self.pca
         }

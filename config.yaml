@@ -9,6 +9,101 @@ data:
   train_test_split: 0.2
   random_state: 42
 
+  # Selected NSDUH columns for memory efficiency (reduces 3,662 → ~80 columns)
+  # Set to null to load all columns
+  nsduh_selected_columns:
+    # Demographics (12 variables)
+    - "AGE2"           # Age
+    - "IRSEX"          # Sex
+    - "EDUSCHGRD2"     # Education level
+    - "NEWRACE2"       # Race/ethnicity
+    - "IRFAMIN3"       # Family income
+    - "IRMARIT"        # Marital status
+    - "IRFAMSIZ"       # Family size
+    - "PDEN10"         # Population density
+    - "GOVTPROG"       # Government assistance
+    - "IRWRKSTAT"      # Employment status
+    - "CATAG6"         # Age category
+    - "CATAG7"         # Age category (7 levels)
+
+    # Alcohol use patterns (20 variables)
+    - "IRALCRC"        # Alcohol recency
+    - "ALCYRTOT"       # Past year alcohol use
+    - "ALCTRY"         # Ever tried alcohol
+    - "ALCFLAG"        # Alcohol use flag
+    - "ALC30USE"       # Past 30 days alcohol use
+    - "ALCDAYS"        # Number of days used alcohol
+    - "ALCNDYS30"      # Number of days used past 30
+    - "ALCYDAYS"       # Number of days used past year
+    - "ALCBNG30"       # Past 30 days binge drinking
+    - "ALCBNG4"        # Binge drinking 4+ drinks
+    - "ALCBNG5"        # Binge drinking 5+ drinks
+    - "ALCBNGNO"       # Number of binge drinking days
+    - "DRKMONTHLY"     # Monthly drinking
+    - "DRKWEEKLY"      # Weekly drinking
+    - "IRCIGRC"        # Cigarette recency
+    - "TOBHVYDLY"      # Heavy tobacco use
+    - "ALCPROBLM"      # Alcohol problem
+    - "ALCDEPYR"       # Alcohol dependence past year
+    - "ALCABDYR"       # Alcohol abuse past year
+    - "ALCABDEYR"      # Alcohol abuse or dependence
+
+    # Substance use (15 variables)
+    - "IRALCFY"        # Alcohol first use age
+    - "IRMJFY"         # Marijuana first use age
+    - "MJEVER"         # Ever used marijuana
+    - "MJYDAYS"        # Marijuana days past year
+    - "COCEVER"        # Ever used cocaine
+    - "HEREVER"        # Ever used heroin
+    - "HALLUCEVR"      # Ever used hallucinogens
+    - "INHALEVER"      # Ever used inhalants
+    - "METHEVER"       # Ever used methamphetamine
+    - "ILLYR"          # Illicit drug use past year
+    - "TOBYR"          # Tobacco use past year
+    - "CIGEVER"        # Ever smoked cigarettes
+    - "CIGYDAYS"       # Cigarette days past year
+    - "SMOKELESS"      # Smokeless tobacco use
+    - "CIGMON"         # Cigarettes per month
+
+    # Health and mental health (15 variables)
+    - "HEALTH2"        # Overall health
+    - "ADDPREV"        # Mental health treatment
+    - "MHSUITHK"       # Suicidal thoughts
+    - "TXYREVER"       # Ever received treatment
+    - "TXYRRECVD2"     # Received treatment past year
+    - "AMHTXRC3"       # Mental health treatment recency
+    - "ADLTMNTL"       # Adult mental health services
+    - "MHTXRX"         # Mental health prescription
+    - "K6SCMON"        # Kessler 6 mental health score
+    - "DEPNDALC"       # Dependent on alcohol
+    - "ABUSALC"        # Alcohol abuse
+    - "YOFELMH"        # Felt mental health problems
+    - "YOFELMHYR"      # Mental health problems past year
+    - "YODELT"         # Delayed mental health care
+    - "YONFMHC"        # Did not receive mental health care
+
+    # Behavior and social (12 variables)
+    - "YODSTCHR"       # Youth delinquent behavior
+    - "YOATTAK"        # Youth attack behavior
+    - "YOSELL"         # Youth sold drugs
+    - "YOSTOLE"        # Youth stole
+    - "IRHHSIZ2"       # Household size
+    - "INCOME"         # Personal income
+    - "POVERTY3"       # Poverty level
+    - "WRKDPSTYR"      # Worked past year
+    - "BOOKED"         # Ever booked/arrested
+    - "MOVEMORE"       # Moved 3+ times
+    - "FAMPOVT2"       # Family poverty
+    - "COUTYP4"        # County type
+
+    # Survey weights and year (6 variables)
+    - "YEAR"           # Survey year
+    - "QUESTID2"       # Questionnaire ID
+    - "ANALWT_C"       # Analysis weight
+    - "VESTR"          # Variance estimation stratum
+    - "VEREP"          # Variance estimation replicate
+    - "CATAGE"         # Age category
+
 # EEG processing
 eeg:
   sampling_rate: 256
@@ -52,6 +147,15 @@ models:
 preprocessing:
   missing_threshold: 0.5  # Remove columns with >50% missing values
   standardize: true
+
+  # PCA dimensionality reduction (방안 2)
+  pca:
+    enabled: true                # Enable/disable PCA
+    n_components: 0.95           # Number of components (int) or variance ratio (float 0-1)
+    # If n_components is float (e.g., 0.95), keep components explaining 95% variance
+    # If n_components is int (e.g., 50), keep exactly 50 components
+    whiten: false                # Apply whitening (mean=0, std=1 per component)
+    random_state: 42
 
 # Training
 training:

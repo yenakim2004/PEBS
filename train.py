@@ -59,10 +59,11 @@ def train_pebs_system(config, verbose=True):
     nsduh_loader = NSDUHLoader(
         file_path=config['data']['nsduh_path'],
         chunksize=config['memory'].get('nsduh_chunksize', 10000),
-        low_memory=config['memory'].get('low_memory_mode', True)
+        low_memory=config['memory'].get('low_memory_mode', True),
+        selected_columns=config['data'].get('nsduh_selected_columns', None)
     )
 
-    nsduh_data = nsduh_loader.load(verbose=verbose)
+    nsduh_data = nsduh_loader.load(verbose=verbose, use_chunks=True)
 
     # ========================================================================
     # STEP 2: Preprocess NSDUH Data
@@ -74,7 +75,8 @@ def train_pebs_system(config, verbose=True):
     preprocessor = NSDUHPreprocessor(
         missing_threshold=config['preprocessing']['missing_threshold'],
         test_size=config['data']['train_test_split'],
-        random_state=config['data']['random_state']
+        random_state=config['data']['random_state'],
+        pca_config=config['preprocessing'].get('pca', None)
     )
 
     processed_data = preprocessor.process(nsduh_data, verbose=verbose)
@@ -269,6 +271,12 @@ def train_pebs_system(config, verbose=True):
         with open(os.path.join(models_path, 'eeg_extractor.pkl'), 'wb') as f:
             pickle.dump(extractor, f)
         print(f"✅ EEG extractor saved to {os.path.join(models_path, 'eeg_extractor.pkl')}")
+
+        # Save PCA (if used)
+        if processed_data['pca'] is not None:
+            with open(os.path.join(models_path, 'pca_nsduh.pkl'), 'wb') as f:
+                pickle.dump(processed_data['pca'], f)
+            print(f"✅ PCA model saved to {os.path.join(models_path, 'pca_nsduh.pkl')}")
 
     # ========================================================================
     # FINAL SUMMARY
