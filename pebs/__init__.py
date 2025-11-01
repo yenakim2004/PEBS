@@ -15,9 +15,14 @@ Main modules:
 __version__ = "1.0.0"
 __author__ = "PEBS Development Team"
 
-from . import data
-from . import features
-from . import models
-from . import utils
+# Import statements removed to avoid circular import issues on Windows
+# Users should import directly from submodules:
+#   from pebs.data.loader import NSDUHLoader, SMNILoader
+#   from pebs.features.eeg_extractor import EEGFeatureExtractor
+#   from pebs.models.eri_model import ERIModel
+#   from pebs.models.bvi_model import BVIModel
+#   from pebs.models.risk_classifier import RiskClassifier
+#   from pebs.utils.visualization import Visualizer
+#   from pebs.utils.metrics import Metrics
 
-__all__ = ["data", "features", "models", "utils"]
+__all__ = []
