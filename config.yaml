@@ -1,0 +1,73 @@
+# PEBS Configuration File
+
+# Data paths
+data:
+  nsduh_path: "data/raw/NSDUH_2002_2018_Tab.tsv"
+  smni_train_path: "data/raw/SMNI_CMI_TRAIN/"
+  smni_test_path: "data/raw/SMNI_CMI_TEST/"
+  processed_path: "data/processed/"
+  train_test_split: 0.2
+  random_state: 42
+
+# EEG processing
+eeg:
+  sampling_rate: 256
+  bands:
+    delta: [0.5, 4]
+    theta: [4, 8]
+    alpha: [8, 13]
+    beta: [13, 30]
+    gamma: [30, 50]
+
+# Model configurations
+models:
+  # Environmental Risk Index (ERI) Model
+  eri:
+    type: "RandomForest"
+    n_estimators: 100
+    max_depth: 10
+    min_samples_split: 20
+    min_samples_leaf: 10
+    random_state: 42
+    n_jobs: -1
+
+  # Biological Vulnerability Index (BVI) Model
+  bvi:
+    type: "LogisticRegression"
+    max_iter: 1000
+    random_state: 42
+    n_jobs: -1
+
+  # Risk Classification
+  risk:
+    eri_threshold: 0.5
+    bvi_threshold: 0.5
+    categories:
+      0: "Low Risk"
+      1: "Medium-Environmental"
+      2: "Medium-Biological"
+      3: "High Risk"
+
+# Preprocessing
+preprocessing:
+  missing_threshold: 0.5  # Remove columns with >50% missing values
+  standardize: true
+
+# Training
+training:
+  verbose: true
+  save_models: true
+  models_path: "models/"
+
+# Visualization
+visualization:
+  save_figures: true
+  figures_path: "figures/"
+  dpi: 300
+  format: "png"
+
+# Memory optimization for 16GB RAM
+memory:
+  nsduh_chunksize: 10000
+  enable_gc: true
+  low_memory_mode: true
