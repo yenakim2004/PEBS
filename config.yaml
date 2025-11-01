@@ -9,100 +9,101 @@ data:
   train_test_split: 0.2
   random_state: 42
 
-  # Selected NSDUH columns for memory efficiency (reduces 3,662 → ~80 columns)
+  # Selected NSDUH columns for memory efficiency (reduces 3,662 → ~75 columns)
   # Set to null to load all columns
+  # NOTE: Column names verified from actual NSDUH_2002_2018_Tab.tsv file
   nsduh_selected_columns:
-    # Demographics (12 variables)
+    # Demographics (14 variables)
     - "AGE2"           # Age
     - "IRSEX"          # Sex
-    - "EDUSCHGRD2"     # Education level
     - "NEWRACE2"       # Race/ethnicity
     - "IRFAMIN3"       # Family income
     - "IRMARIT"        # Marital status
-    - "IRFAMSIZ"       # Family size
-    - "PDEN10"         # Population density
-    - "GOVTPROG"       # Government assistance
-    - "IRWRKSTAT"      # Employment status
-    - "CATAG6"         # Age category
-    - "CATAG7"         # Age category (7 levels)
+    - "CATAGE"         # Age category
+    - "CATAG2"         # Age category (detailed)
+    - "CATAG3"         # Age category (alternate)
+    - "INCOME"         # Personal income
+    - "SERVICE"        # Military service
+    - "IRHHSIZ2"       # Household size
+    - "COUTYP2"        # County type
+    - "PDEN90"         # Population density
+    - "POVERTY2"       # Poverty level
 
-    # Alcohol use patterns (20 variables)
-    - "IRALCRC"        # Alcohol recency
-    - "ALCYRTOT"       # Past year alcohol use
+    # Alcohol use core (9 variables)
+    - "ALCEVER"        # Ever used alcohol
     - "ALCTRY"         # Ever tried alcohol
+    - "ALCYRTOT"       # Past year alcohol use
+    - "ALCDAYS"        # Days used alcohol
     - "ALCFLAG"        # Alcohol use flag
-    - "ALC30USE"       # Past 30 days alcohol use
-    - "ALCDAYS"        # Number of days used alcohol
-    - "ALCNDYS30"      # Number of days used past 30
-    - "ALCYDAYS"       # Number of days used past year
-    - "ALCBNG30"       # Past 30 days binge drinking
-    - "ALCBNG4"        # Binge drinking 4+ drinks
-    - "ALCBNG5"        # Binge drinking 5+ drinks
-    - "ALCBNGNO"       # Number of binge drinking days
-    - "DRKMONTHLY"     # Monthly drinking
-    - "DRKWEEKLY"      # Weekly drinking
-    - "IRCIGRC"        # Cigarette recency
-    - "TOBHVYDLY"      # Heavy tobacco use
-    - "ALCPROBLM"      # Alcohol problem
-    - "ALCDEPYR"       # Alcohol dependence past year
-    - "ALCABDYR"       # Alcohol abuse past year
-    - "ALCABDEYR"      # Alcohol abuse or dependence
+    - "ALCYR"          # Alcohol use past year
+    - "ALCMON"         # Alcohol use past month
+    - "ALCYDAYS"       # Days used past year
+    - "ALCMDAYS"       # Days used past month
 
-    # Substance use (15 variables)
+    # Alcohol problem indicators (20 variables)
+    - "ALCLOTTM"       # Lots of time obtaining/using
+    - "ALCGTOVR"       # Got over effects
+    - "ALCLIMIT"       # Limit amount
+    - "ALCKPLMT"       # Keep limit
+    - "ALCNDMOR"       # Need more for effect
+    - "ALCLSEFX"       # Less effect with same amount
+    - "ALCCUTDN"       # Cut down use
+    - "ALCCUTEV"       # Ever cut down
+    - "ALCCUT1X"       # Cut down past year
+    - "ALCWD2SX"       # Withdrawal 2+ symptoms
+    - "ALCWDSMT"       # Withdrawal symptoms
+    - "ALCEMOPB"       # Emotional problems
+    - "ALCEMCTD"       # Emotional problems continued
+    - "ALCPHLPB"       # Physical problems
+    - "ALCPHCTD"       # Physical problems continued
+    - "ALCLSACT"       # Less activities
+    - "ALCSERPB"       # Serious problems
+    - "ALCPDANG"       # Physical danger
+    - "ALCLAWTR"       # Legal trouble
+    - "ALCFMFPB"       # Family/friend problems
+    - "ALCFMCTD"       # Family problems continued
+
+    # Substance use (13 variables)
     - "IRALCFY"        # Alcohol first use age
     - "IRMJFY"         # Marijuana first use age
+    - "CIGEVER"        # Ever smoked cigarettes
     - "MJEVER"         # Ever used marijuana
-    - "MJYDAYS"        # Marijuana days past year
     - "COCEVER"        # Ever used cocaine
     - "HEREVER"        # Ever used heroin
-    - "HALLUCEVR"      # Ever used hallucinogens
-    - "INHALEVER"      # Ever used inhalants
-    - "METHEVER"       # Ever used methamphetamine
-    - "ILLYR"          # Illicit drug use past year
+    - "METHAMEVR"      # Ever used methamphetamine
     - "TOBYR"          # Tobacco use past year
-    - "CIGEVER"        # Ever smoked cigarettes
-    - "CIGYDAYS"       # Cigarette days past year
-    - "SMOKELESS"      # Smokeless tobacco use
-    - "CIGMON"         # Cigarettes per month
+    - "ILLYR"          # Illicit drug use past year
+    - "COCYR"          # Cocaine past year
+    - "HERYR"          # Heroin past year
+    - "INHALYR"        # Inhalants past year
+    - "METHAMYR"       # Methamphetamine past year
 
-    # Health and mental health (15 variables)
-    - "HEALTH2"        # Overall health
-    - "ADDPREV"        # Mental health treatment
-    - "MHSUITHK"       # Suicidal thoughts
+    # Tobacco (5 variables)
+    - "CIGTRY"         # Ever tried cigarettes
+    - "CIGMON"         # Cigarettes past month
+    - "IRCIGRC"        # Cigarette recency
+    - "CIGDLYMO"       # Daily cigarette use past month
+    - "CIGDLYFU"       # Daily cigarette use
+
+    # Health and treatment (2 variables)
+    - "HEALTH"         # Overall health
     - "TXYREVER"       # Ever received treatment
-    - "TXYRRECVD2"     # Received treatment past year
-    - "AMHTXRC3"       # Mental health treatment recency
-    - "ADLTMNTL"       # Adult mental health services
-    - "MHTXRX"         # Mental health prescription
-    - "K6SCMON"        # Kessler 6 mental health score
-    - "DEPNDALC"       # Dependent on alcohol
-    - "ABUSALC"        # Alcohol abuse
-    - "YOFELMH"        # Felt mental health problems
-    - "YOFELMHYR"      # Mental health problems past year
-    - "YODELT"         # Delayed mental health care
-    - "YONFMHC"        # Did not receive mental health care
 
-    # Behavior and social (12 variables)
-    - "YODSTCHR"       # Youth delinquent behavior
-    - "YOATTAK"        # Youth attack behavior
-    - "YOSELL"         # Youth sold drugs
-    - "YOSTOLE"        # Youth stole
-    - "IRHHSIZ2"       # Household size
-    - "INCOME"         # Personal income
-    - "POVERTY3"       # Poverty level
-    - "WRKDPSTYR"      # Worked past year
-    - "BOOKED"         # Ever booked/arrested
-    - "MOVEMORE"       # Moved 3+ times
-    - "FAMPOVT2"       # Family poverty
-    - "COUTYP4"        # County type
-
-    # Survey weights and year (6 variables)
+    # Survey metadata (4 variables)
     - "YEAR"           # Survey year
-    - "QUESTID2"       # Questionnaire ID
-    - "ANALWT_C"       # Analysis weight
+    - "QUARTER"        # Survey quarter
     - "VESTR"          # Variance estimation stratum
     - "VEREP"          # Variance estimation replicate
-    - "CATAGE"         # Age category
+
+    # Additional alcohol treatment (8 variables)
+    - "ALCTRMT"        # Alcohol treatment
+    - "ALCPINS"        # Private insurance coverage
+    - "ALCPCARE"       # Private care
+    - "ALCPCAID"       # Medicaid coverage
+    - "ALCPPUBP"       # Other public coverage
+    - "ALCPSAVE"       # Savings
+    - "ALCPFMLY"       # Family coverage
+    - "ALCPCORT"       # Court ordered
 
 # EEG processing
 eeg:
