@@ -52,16 +52,16 @@ class NSDUHPreprocessor:
             print("🎯 Identifying target variable...")
 
         # Common NSDUH alcohol-related variables
-        # Prioritize clearer variables without missing value codes
+        # Prioritize binary variables with balanced distribution
         target_candidates = [
-            'ALCTRY',    # Ever tried alcohol (clearest)
-            'ALCEVER',   # Ever used alcohol (clear)
+            'ALCEVER',   # Ever used alcohol (binary: 0/1) - BEST
+            'ALCYR',     # Past Year Alcohol Use (binary: 0/1)
             'ABODLANG',  # Alcohol Abuse/Dependence
             'ABODAL2',   # Alcohol Abuse/Dependence (alternative)
             'ALCABDEP',  # Alcohol Abuse or Dependence
             'ALDEPEV',   # Alcohol Dependence Ever
             'ABUSALCO',  # Alcohol Abuse
-            'ALCYR'      # Past Year Alcohol Use (may have -9 values)
+            'ALCTRY'     # Age tried alcohol (1,2,3,9) - 97% is 9, AVOID
         ]
 
         # Try to find existing target variable

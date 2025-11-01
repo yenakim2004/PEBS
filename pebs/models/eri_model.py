@@ -36,6 +36,7 @@ class ERIModel:
                 max_depth=kwargs.get('max_depth', 10),
                 min_samples_split=kwargs.get('min_samples_split', 20),
                 min_samples_leaf=kwargs.get('min_samples_leaf', 10),
+                class_weight=kwargs.get('class_weight', 'balanced'),  # Handle class imbalance
                 random_state=kwargs.get('random_state', 42),
                 n_jobs=kwargs.get('n_jobs', -1),
                 verbose=kwargs.get('verbose', 0)
