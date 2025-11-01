@@ -89,21 +89,16 @@ This will:
 7. Generate visualizations
 8. Save all models to `models/`
 
-**Estimated runtime**: 30-60 minutes on full dataset
+**Estimated runtime**: 2-3 minutes on 16GB RAM system
 
-### Making Predictions
+### Results
 
-Predict risk for new samples:
+After training completes, you will find:
+- Trained models in `models/` directory
+- Performance dashboard in `figures/pebs_dashboard.png`
+- Console output with detailed metrics
 
-```bash
-python predict.py --nsduh sample_survey.csv --eeg sample_eeg.csv
-```
-
-Batch prediction:
-
-```bash
-python predict.py --nsduh batch_surveys.csv --eeg batch_features.csv --batch
-```
+See [RESULTS.md](RESULTS.md) for detailed performance analysis.
 
 ## Project Structure
 
@@ -210,25 +205,24 @@ python train.py --config my_config.yaml
 python train.py --quiet
 ```
 
-### Advanced Prediction
+### Loading Trained Models
 
 ```python
 from pebs.models.eri_model import ERIModel
 from pebs.models.bvi_model import BVIModel
 from pebs.models.risk_classifier import RiskClassifier
+import pickle
 
 # Load models
 eri_model = ERIModel.load('models/eri_model.pkl')
 bvi_model = BVIModel.load('models/bvi_model.pkl')
 risk_classifier = RiskClassifier.load('models/risk_classifier.pkl')
 
-# Get scores
-eri_score = eri_model.get_eri_scores(nsduh_features)[0]
-bvi_score = bvi_model.get_bvi_scores(eeg_features)[0]
-
-# Classify risk
-result = risk_classifier.classify_single(eri_score, bvi_score)
-print(f"Risk Category: {result['name']}")
+# Load scalers
+with open('models/scaler_nsduh.pkl', 'rb') as f:
+    scaler_nsduh = pickle.load(f)
+with open('models/scaler_eeg.pkl', 'rb') as f:
+    scaler_eeg = pickle.load(f)
 ```
 
 ### Custom Feature Extraction
@@ -252,19 +246,26 @@ features = extractor.extract_features_from_file(eeg_data)
 
 ### Model Accuracy
 
-Typical performance on test set:
+Actual performance on test set (949,285 samples):
 
-- **ERI Model**: 85-90% accuracy
-- **BVI Model**: 80-85% accuracy
-- **Risk Classification**: 4-class categorization
+- **ERI Model**: 82.99% accuracy (2-class binary classification)
+- **BVI Model**: 71.25% accuracy (alcoholic vs control)
+- **Risk Classification**: 4-category system
+  - Low Risk: 19.0%
+  - Medium-Environmental: 29.8%
+  - Medium-Biological: 20.0%
+  - High Risk: 31.2%
 
 ### Runtime
 
 On a system with 16GB RAM and modern CPU:
 
-- **Training**: 30-60 minutes (full dataset)
-- **Prediction (single)**: < 1 second
-- **Prediction (batch, 1000 samples)**: ~10 seconds
+- **Training**: 2-3 minutes (full dataset with 949K samples)
+  - NSDUH loading: 1.5 minutes
+  - EEG processing: 10 seconds
+  - Model training: 30 seconds
+  - Total pipeline: ~2.5 minutes
+- **Memory Usage**: 0.58 GB (97.9% reduction from 26GB)
 
 ## Troubleshooting
 

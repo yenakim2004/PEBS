@@ -90,27 +90,33 @@ NSDUHPreprocessor(
 - Pass `pca_config` from config to NSDUHPreprocessor
 - Save PCA model alongside other artifacts
 
-## Expected Results
+## ✅ Actual Results (Verified on 16GB RAM)
 
 ### Memory Usage
 | Stage | Before | After | Reduction |
 |-------|--------|-------|-----------|
-| Data loading | 26GB | 2GB | 92% |
-| Post-PCA | 2GB | 1.2GB | 40% |
-| **Total** | **26GB** | **1.2GB** | **95%** |
+| Data loading | 26GB | 0.58GB | **97.9%** |
+| Post-PCA | 0.58GB | 0.58GB | Minimal |
+| **Total** | **26GB** | **0.58GB** | **97.9%** |
 
 ### Loading Time
 | Operation | Before | After |
 |-----------|--------|-------|
-| NSDUH load | Never completes | 30-60 seconds |
-| Full pipeline | N/A | 5-10 minutes |
+| NSDUH load | Never completes | 1:21 minutes |
+| Full pipeline | N/A | **2:34 minutes** |
 
 ### Feature Space
 | Stage | Features |
 |-------|----------|
 | Original | 3,662 |
-| After column selection | 80 (97.8% reduction) |
-| After PCA | ~30-50 (98.6% reduction) |
+| After column selection | 76 (**97.9% reduction**) |
+| After PCA | 23 (**99.4% reduction**) |
+
+### Model Performance
+| Model | Accuracy | Samples |
+|-------|----------|---------|
+| ERI (Environmental Risk) | **82.99%** | 949,285 |
+| BVI (Biological Vulnerability) | **71.25%** | 948 |
 
 ## How to Use
 
@@ -154,29 +160,46 @@ nsduh_data = nsduh_loader.load(use_chunks=False)
 
 ## Validation
 
-### Test on Windows (16GB RAM)
+### ✅ Successfully Tested on 16GB RAM
+
+**Final Results**:
 ```bash
 python train.py
 ```
 
-Expected output:
+**Actual Output**:
 ```
 📊 Loading NSDUH dataset...
-   Selected columns: 80 (instead of all 3,662)
+   Selected columns: 76 (instead of all 3,662)
    Using chunksize: 10000
-Loading chunks: 100%|████████| 95/95 [00:45<00:00, 2.1chunks/s]
+Loading chunks: 95it [01:21, 1.17it/s]
 ✅ Dataset loaded successfully
-   Shape: (949285, 80)
-   Memory usage: 1.94 GB
-   Memory saved: ~97.8% by column selection
+   Shape: (949285, 76)
+   Memory usage: 0.58 GB
+   Memory saved: ~97.9% by column selection
+
+🎯 Identifying target variable...
+   Using 'ALCEVER' as target variable (converting to binary)
+   Binary distribution: {0: 350998 (Never), 1: 598287 (Ever)}
+   Ratio: 37.0% vs 63.0%
 
 🔬 Applying PCA dimensionality reduction...
    Target variance explained: 95.0%
-   Original features: 80
+   Original features: 74
 ✅ PCA completed
-   Reduced to: 42 components
-   Variance explained: 95.12%
-   Dimension reduction: 80 → 42 (47.5% reduction)
+   Reduced to: 23 components
+   Variance explained: 95.16%
+   Dimension reduction: 74 → 23 (68.9% reduction)
+
+================================================================================
+TRAINING COMPLETE
+================================================================================
+Duration: 0:02:34
+📊 Final Results Summary:
+   ERI Model Test Accuracy: 0.8299
+   BVI Model Test Accuracy: 0.7125
+   Risk Categories: 4 classes
+   High Risk Samples: 150 (31.2%)
 ```
 
 ### Verify Memory Usage
