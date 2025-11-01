@@ -24,7 +24,7 @@ from sklearn.preprocessing import StandardScaler
 
 def load_config(config_path='config.yaml'):
     """Load configuration from YAML file."""
-    with open(config_path, 'r') as f:
+    with open(config_path, 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
     return config
 
@@ -53,8 +53,9 @@ def train_pebs_system(config, verbose=True):
     # STEP 1: Load NSDUH Data
     # ========================================================================
     print("\n" + "="*80)
-    print("STEP 1: LOADING NSDUH DATA")
-    print("="*80 + "\n")
+    print("STEP 1/9: LOADING NSDUH DATA")
+    print("="*80)
+    print("⏱️  Estimated time: 30-60 seconds\n")
 
     nsduh_loader = NSDUHLoader(
         file_path=config['data']['nsduh_path'],
@@ -69,8 +70,9 @@ def train_pebs_system(config, verbose=True):
     # STEP 2: Preprocess NSDUH Data
     # ========================================================================
     print("\n" + "="*80)
-    print("STEP 2: PREPROCESSING NSDUH DATA")
-    print("="*80 + "\n")
+    print("STEP 2/9: PREPROCESSING NSDUH DATA")
+    print("="*80)
+    print("⏱️  Estimated time: 1-3 minutes\n")
 
     preprocessor = NSDUHPreprocessor(
         missing_threshold=config['preprocessing']['missing_threshold'],
@@ -96,8 +98,9 @@ def train_pebs_system(config, verbose=True):
     # STEP 3: Load SMNI EEG Data
     # ========================================================================
     print("\n" + "="*80)
-    print("STEP 3: LOADING SMNI EEG DATA")
-    print("="*80 + "\n")
+    print("STEP 3/9: LOADING SMNI EEG DATA")
+    print("="*80)
+    print("⏱️  Estimated time: 10-20 seconds (948 files)\n")
 
     smni_loader = SMNILoader(
         train_path=config['data']['smni_train_path'],
@@ -115,8 +118,9 @@ def train_pebs_system(config, verbose=True):
     # STEP 4: Extract EEG Features
     # ========================================================================
     print("\n" + "="*80)
-    print("STEP 4: EXTRACTING EEG FEATURES")
-    print("="*80 + "\n")
+    print("STEP 4/9: EXTRACTING EEG FEATURES")
+    print("="*80)
+    print("⏱️  Estimated time: 1-2 minutes\n")
 
     extractor = EEGFeatureExtractor(
         sampling_rate=config['eeg']['sampling_rate'],
@@ -144,8 +148,9 @@ def train_pebs_system(config, verbose=True):
     # STEP 5: Train ERI Model
     # ========================================================================
     print("\n" + "="*80)
-    print("STEP 5: TRAINING ERI MODEL (Environmental Risk Index)")
-    print("="*80 + "\n")
+    print("STEP 5/9: TRAINING ERI MODEL (Environmental Risk Index)")
+    print("="*80)
+    print("⏱️  Estimated time: 1-2 minutes\n")
 
     eri_config = config['models']['eri']
     eri_model = ERIModel(
@@ -169,8 +174,9 @@ def train_pebs_system(config, verbose=True):
     # STEP 6: Train BVI Model
     # ========================================================================
     print("\n" + "="*80)
-    print("STEP 6: TRAINING BVI MODEL (Biological Vulnerability Index)")
-    print("="*80 + "\n")
+    print("STEP 6/9: TRAINING BVI MODEL (Biological Vulnerability Index)")
+    print("="*80)
+    print("⏱️  Estimated time: 30-60 seconds\n")
 
     bvi_config = config['models']['bvi']
     bvi_model = BVIModel(
@@ -194,8 +200,9 @@ def train_pebs_system(config, verbose=True):
     # STEP 7: Risk Classification
     # ========================================================================
     print("\n" + "="*80)
-    print("STEP 7: RISK CLASSIFICATION")
-    print("="*80 + "\n")
+    print("STEP 7/9: RISK CLASSIFICATION")
+    print("="*80)
+    print("⏱️  Estimated time: <10 seconds\n")
 
     risk_config = config['models']['risk']
     risk_classifier = RiskClassifier(
@@ -221,8 +228,9 @@ def train_pebs_system(config, verbose=True):
     # ========================================================================
     if config['visualization']['save_figures']:
         print("\n" + "="*80)
-        print("STEP 8: GENERATING VISUALIZATIONS")
-        print("="*80 + "\n")
+        print("STEP 8/9: GENERATING VISUALIZATIONS")
+        print("="*80)
+        print("⏱️  Estimated time: 10-20 seconds\n")
 
         visualizer = Visualizer(
             save_figures=True,
@@ -247,8 +255,9 @@ def train_pebs_system(config, verbose=True):
     # ========================================================================
     if config['training']['save_models']:
         print("\n" + "="*80)
-        print("STEP 9: SAVING MODELS")
-        print("="*80 + "\n")
+        print("STEP 9/9: SAVING MODELS")
+        print("="*80)
+        print("⏱️  Estimated time: <10 seconds\n")
 
         models_path = config['training']['models_path']
         os.makedirs(models_path, exist_ok=True)
