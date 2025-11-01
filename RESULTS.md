@@ -191,9 +191,13 @@ The PEBS Risk Space shows clear separation of 4 categories:
 
 ## Dashboard Analysis
 
+![PEBS System Dashboard](figures/pebs_dashboard.png)
+
+**Figure 1**: PEBS System - Comprehensive Performance Dashboard showing ERI/BVI distributions, confusion matrices, risk categorization, and correlation analysis.
+
 ### Components
 
-The PEBS dashboard (`figures/pebs_dashboard.png`) contains 7 panels:
+The PEBS dashboard contains 7 panels:
 
 1. **ERI Score Distribution**: Bimodal distribution (0.0-0.9 range)
 2. **BVI Score Distribution**: Normal distribution (0.2-0.8 range)
@@ -332,8 +336,14 @@ The PEBS system demonstrates:
 ## References
 
 ### Datasets
-- NSDUH: [SAMHDA Data Archive](https://www.datafiles.samhsa.gov/)
-- SMNI: [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/EEG+Database)
+
+**NSDUH (National Survey on Drug Use and Health)**
+- Official Source: [SAMHDA Data Archive](https://www.datafiles.samhsa.gov/)
+- **Kaggle Dataset**: [NSDUH 2002-2018](https://www.kaggle.com/datasets/adamhamrick/national-survey-of-drug-use-and-health-20022018)
+
+**SMNI (EEG Database)**
+- Official Source: [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/EEG+Database)
+- **Kaggle Dataset**: [Alcoholics EEG Data](https://www.kaggle.com/datasets/nnair25/Alcoholics)
 
 ### Methodology
 - Random Forest: Breiman, L. (2001). Random Forests. Machine Learning, 45(1), 5-32.

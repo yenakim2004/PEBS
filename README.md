@@ -177,14 +177,18 @@ memory:
 
 ### NSDUH (National Survey on Drug Use and Health)
 
-- **Source**: SAMHDA (https://www.datafiles.samhsa.gov/)
+- **Source**: SAMHDA / Kaggle
+  - Official: https://www.datafiles.samhsa.gov/
+  - **Kaggle**: https://www.kaggle.com/datasets/adamhamrick/national-survey-of-drug-use-and-health-20022018
 - **Size**: ~12GB, 949,285 rows × 3,662 columns
 - **Format**: Tab-separated values (TSV)
-- **Content**: Comprehensive survey on substance use
+- **Content**: Comprehensive survey on substance use (2002-2018)
 
 ### SMNI (EEG Database)
 
-- **Source**: UCI ML Repository
+- **Source**: UCI ML Repository / Kaggle
+  - Official: UCI Machine Learning Repository
+  - **Kaggle**: https://www.kaggle.com/datasets/nnair25/Alcoholics
 - **Size**: 948 CSV files (468 train + 480 test)
 - **Format**: 64-channel EEG recordings
 - **Sampling Rate**: 256 Hz
