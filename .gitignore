@@ -4,8 +4,8 @@ data/processed/
 *.tsv
 *.csv
 
-# Model files
-models/
+# Model files (trained models directory only, not source code)
+/models/
 *.pkl
 *.h5
 *.pt

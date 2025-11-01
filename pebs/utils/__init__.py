@@ -1,6 +1,8 @@
 """Utility modules."""
 
-from .visualization import Visualizer
-from .metrics import Metrics
+# Import statements removed to avoid module loading issues on Windows
+# Import directly:
+#   from pebs.utils.visualization import Visualizer
+#   from pebs.utils.metrics import Metrics
 
-__all__ = ["Visualizer", "Metrics"]
+__all__ = []
