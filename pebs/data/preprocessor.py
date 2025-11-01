@@ -68,11 +68,29 @@ class NSDUHPreprocessor:
         for candidate in target_candidates:
             if candidate in df.columns:
                 self.target_column = candidate
-                if verbose:
-                    print(f"   Using '{candidate}' as target variable")
-                    value_counts = df[candidate].value_counts()
-                    print(f"   Distribution (before filtering): {value_counts.to_dict()}")
-                return df[candidate]
+
+                # Special handling for ALCEVER: convert to binary
+                if candidate == 'ALCEVER':
+                    if verbose:
+                        print(f"   Using '{candidate}' as target variable (converting to binary)")
+                        original_counts = df[candidate].value_counts()
+                        print(f"   Original distribution: {original_counts.to_dict()}")
+
+                    # Convert to binary: 99 = Never used (0), Others = Used (1)
+                    target_binary = (df[candidate] != 99).astype(int)
+
+                    if verbose:
+                        binary_counts = target_binary.value_counts()
+                        print(f"   Binary distribution: {{0: {binary_counts.get(0, 0)} (Never), 1: {binary_counts.get(1, 0)} (Ever)}}")
+                        print(f"   Ratio: {binary_counts.get(0, 0) / len(target_binary) * 100:.1f}% vs {binary_counts.get(1, 0) / len(target_binary) * 100:.1f}%")
+
+                    return target_binary
+                else:
+                    if verbose:
+                        print(f"   Using '{candidate}' as target variable")
+                        value_counts = df[candidate].value_counts()
+                        print(f"   Distribution (before filtering): {value_counts.to_dict()}")
+                    return df[candidate]
 
         # Fallback: Create binary target from alcohol use frequency
         if verbose:
